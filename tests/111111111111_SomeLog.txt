@@ -1,0 +1,3 @@
+Application: test reader
+Detected device after 11.0 seconds.
+
