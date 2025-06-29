@@ -6,7 +6,6 @@
 #include <vector>
 #include <regex>
 #include <ctime>
-#include "utils.h"
 
 struct FileData
 {
@@ -33,7 +32,6 @@ std::vector<std::string> GetFilepath()
 			std::cout << filename << std::endl;
 		}
 	}
-
 	return filepath;
 };
 
@@ -51,34 +49,6 @@ public:
         return inputLine.find("Error") != std::string::npos;
 	}
 
-    std::string correctTimeString(std::string str)
-    {
-        std::string parsedContent;
-        parsedContent.clear();
-        if (str.size() == 0)
-            return parsedContent = "Error";
-        std::string stringContent = str;
-        bool sameNumber = false;
-        for (int i = 0; i < stringContent.size() - 1; i++)
-        {
-            if (isdigit(stringContent[i]) && !sameNumber)
-            {
-                sameNumber = true;
-                parsedContent += stringContent[i];
-            }
-            else if (isdigit(stringContent[i]) && sameNumber)
-            {
-                parsedContent += stringContent[i];
-            }
-            else if (stringContent[i] == '.' && sameNumber)
-            {
-                sameNumber = false;
-                parsedContent += '.';
-            }
-        }
-        return parsedContent;
-    }
-
 	void Parse(std::vector<std::string> path)
 	{
 		bool errorFlag = false;
@@ -92,16 +62,13 @@ public:
 				auto contentPosition = content.find("Detected device");
                 if (contentPosition != std::string::npos)
                 {
-                    Timer timer;
-                    timer.Start();
                     std::smatch match_time;
-                    std::regex time_expr("(\\d{1,10}[[:punct:]]\\d{1,10})\\s\\w{7}[[:punct:]]");
+                    std::regex time_expr("(\\d{1,10}[[:punct:]]\\d{1,10})");
                     if (std::regex_search(content.cbegin(), content.cend(), match_time, time_expr))
                     {
                         SData.time = match_time[1];
                         contentFlag = true;
                     }
-                    std::cout << "Time: " << timer.Stop() << std::endl;
                     if (errorFlag)
                         SData.isFailed = true;
 					else
@@ -138,6 +105,7 @@ void FillFile(std::fstream file, Parser &obj)
 	{
         file << obj.FilesData[i].time << ',' << obj.FilesData[i].path << ',' << obj.FilesData[i].isFailed << '\n';
 	}
+	file.close();
 }
 
 int main()
